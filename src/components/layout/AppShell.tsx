@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { LayoutDashboard, Settings, Bell, HelpCircle } from 'lucide-react'; // HelpCircle ikonu eklendi
 import { cn } from '@/lib/utils';
+import { useStore } from '@/core/store';
 import React from 'react'; // React importu eklendi
 
 const navItems = [
@@ -12,6 +13,12 @@ const navItems = [
 // PREMIUM UI: Masaüstü ve mobil cihazlar için duyarlı ve dinamik uygulama kabuğu
 // PREMIUM UI: Glassmorphism efektleri için backdrop-blur ve şeffaf borderlar
 export function AppShell() {
+  const { theme, setTheme } = useStore();
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <div className="flex h-dvh bg-[var(--bg-base)] text-[var(--text-primary)] overflow-hidden">
       
@@ -60,10 +67,28 @@ export function AppShell() {
                            border-b border-[var(--border)] bg-[var(--bg-surface)]/80 
                            backdrop-blur-xl sticky top-0 z-30"> {/* PREMIUM UI: Glassmorphism header */}
           <h1 className="font-semibold text-lg text-[var(--text-primary)] font-outfit">Dashboard</h1>
-          <button className="relative p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" aria-label="Notifications">
-            <Bell size={20} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5" />
+                  <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+            </button>
+            <button className="relative p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" aria-label="Notifications">
+              <Bell size={20} />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+            </button>
+          </div>
         </header>
 
         {/* Page Content */}

@@ -4,6 +4,13 @@ import { VitePWA } from 'vite-plugin-pwa'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./tests/setup/setupTests.ts'],
+    include: ['tests/**/*.test.{ts,tsx}'],
+  },
+
   plugins: [
     react(),
     tailwindcss(),

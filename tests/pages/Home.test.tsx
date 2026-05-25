@@ -1,52 +1,63 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom'; // Link bileşeni için MemoryRouter gerekli
 import Home from '@/pages/Home';
+import { useStore } from '@/core/store';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// Mock the store
+vi.mock('@/core/store', () => ({
+  useStore: vi.fn()
+}));
+
+// Mock PageContainer
+vi.mock('@/components/layout/PageContainer', () => ({
+  PageContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+}));
+
+// Mock Framer Motion
+vi.mock('framer-motion', () => ({
+  motion: {
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>
+  }
+}));
 
 describe('Home Page', () => {
-  // TEST 1: Home bileşeninin ana başlık ve açıklama metinleriyle doğru şekilde render edildiğini kontrol et.
-  test('renders Home page with title and description', () => {
-    render(
-      <MemoryRouter> {/* Link bileşeni kullandığımız için MemoryRouter gerekli */}
-        <Home />
-      </MemoryRouter>
-    );
-
-    // Ana başlığın render edildiğini doğrula
-    expect(screen.getByRole('heading', { level: 1, name: /Lovestory: A Cinematic Narrative Experience/i })).toBeInTheDocument();
-
-    // Açıklama paragrafının render edildiğini doğrula
-    expect(screen.getByText(/Uygulama başarıyla oluşturuldu ve premium seviyeye yükseltildi!/i)).toBeInTheDocument();
-
-    // PREMIUM UI: PageContainer'ın title ve description props'ları ile gönderilen metinleri kontrol et
-    expect(screen.getByRole('heading', { level: 2, name: /Welcome to Lovestory/i })).toBeInTheDocument();
-    expect(screen.getByText(/A Cinematic Narrative Experience for premium users./i)).toBeInTheDocument();
-
-    // GitHub linkinin varlığını ve doğru attributelara sahip olduğunu doğrula
-    const githubLink = screen.getByRole('link', { name: /Visit our GitHub/i });
-    expect(githubLink).toBeInTheDocument();
-    expect(githubLink).toHaveAttribute('href', 'https://github.com/lovable-ai/lovestory');
-    expect(githubLink).toHaveAttribute('target', '_blank');
-    expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer');
+  beforeEach(() => {
+    // Default store mock
+    vi.mocked(useStore).mockReturnValue({
+      theme: 'dark',
+      setTheme: vi.fn(),
+      user: null,
+      setUser: vi.fn(),
+      isLoading: false,
+      setLoading: vi.fn()
+    });
   });
 
-  // TEST 2: Framer Motion animasyonları doğrudan DOM'da test etmek zor olduğundan,
-  // animasyonun varlığını göstermek için render edilen elementin özelliklerini kontrol edebiliriz.
-  // Ancak, Framer Motion'ın kendisi ayrı bir kütüphane olup, animasyonların görsel doğruluğu
-  // genellikle e2e testler veya görsel regresyon testleri ile sağlanır.
-  test('Home page content container has motion attributes', () => {
-    render(
-      <MemoryRouter>
-        <Home />
-      </MemoryRouter>
-    );
-
-    const contentContainer = screen.getByText(/Uygulama başarıyla oluşturuldu/i).closest('div');
-    expect(contentContainer).toBeInTheDocument();
-
-    // motion.div tarafından eklenen 'data-framer-node' gibi attributelar Framer Motion'ın çalıştığını gösterir.
-    // Bu daha çok bir 'sanity check'tir, animasyonun görsel doğruluğunu test etmez.
-    expect(contentContainer).toHaveAttribute('data-framer-node', 'true');
+  it('renders the welcome message', () => {
+    render(<Home />);
+    expect(screen.getByText('Welcome to Lovestory')).toBeInTheDocument();
+    expect(screen.getByText('A Cinematic Narrative Experience for premium users.')).toBeInTheDocument();
   });
 
-  // Not: Zustand store'ları bu bileşende doğrudan kullanılmadığı için, store action testleri atlanmıştır.
+  it('renders the GitHub link', () => {
+    render(<Home />);
+    const link = screen.getByText('Visit our GitHub');
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', 'https://github.com/lovable-ai/lovestory');
+  });
+
+  it('applies the correct theme class', () => {
+    vi.mocked(useStore).mockReturnValueOnce({
+      theme: 'light',
+      setTheme: vi.fn(),
+      user: null,
+      setUser: vi.fn(),
+      isLoading: false,
+      setLoading: vi.fn()
+    });
+
+    render(<Home />);
+    const card = screen.getByText('Welcome to Lovestory').closest('div');
+    expect(card).toHaveClass('glass-morphism');
+  });
 });

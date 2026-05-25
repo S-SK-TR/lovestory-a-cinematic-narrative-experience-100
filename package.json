@@ -8,8 +8,10 @@
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test": "vitest run --exclude tests/e2e",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:e2e": "vitest run tests/e2e"
   },
   "dependencies": {
     "clsx": "^2.1.1",
