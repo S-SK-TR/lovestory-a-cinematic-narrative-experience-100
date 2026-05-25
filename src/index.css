@@ -25,9 +25,9 @@
   --background: 0 0% 98%;
   --foreground: 222 47% 11%;
   --bg-base: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
-  --bg-surface: theme(colors.white); /* Adjusted to match Frontend Design Skill */
-  --bg-elevated: theme(colors.white); /* Adjusted to match Frontend Design Skill */
-  --border: theme(colors.slate.200); /* Adjusted to match Frontend Design Skill */
+  --bg-surface: var(--color-white); /* Adjusted to match Frontend Design Skill */
+  --bg-elevated: var(--color-white); /* Adjusted to match Frontend Design Skill */
+  --border: var(--color-slate-200); /* Adjusted to match Frontend Design Skill */
   --glass-bg: rgba(255, 255, 255, 0.6);
   --glass-border: rgba(0, 0, 0, 0.08);
   --glass-glow: rgba(59, 130, 246, 0.08);
