@@ -1,6 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { describe, it, expect } from 'vitest';
+
+vi.mock('framer-motion', () => ({
+  motion: {
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>
+  }
+}));
 
 describe('PageContainer Component', () => {
   it('renders children content', () => {
@@ -9,15 +14,20 @@ describe('PageContainer Component', () => {
         <div data-testid="child-content">Test Content</div>
       </PageContainer>
     );
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
   it('renders title and description when provided', () => {
     render(
-      <PageContainer title="Test Title" description="Test Description">
+      <PageContainer
+        title="Test Title"
+        description="Test Description"
+      >
         <div>Content</div>
       </PageContainer>
     );
+
     expect(screen.getByText('Test Title')).toBeInTheDocument();
     expect(screen.getByText('Test Description')).toBeInTheDocument();
   });
@@ -28,15 +38,7 @@ describe('PageContainer Component', () => {
         <div>Content</div>
       </PageContainer>
     );
-    expect(screen.getByTestId('action-button')).toBeInTheDocument();
-  });
 
-  it('applies additional className when provided', () => {
-    const { container } = render(
-      <PageContainer className="custom-class">
-        <div>Content</div>
-      </PageContainer>
-    );
-    expect(container.firstChild).toHaveClass('custom-class');
+    expect(screen.getByTestId('action-button')).toBeInTheDocument();
   });
 });

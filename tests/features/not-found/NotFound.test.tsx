@@ -1,46 +1,50 @@
 import { render, screen } from '@testing-library/react';
-import NotFound from '@/features/not-found/NotFound';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, it, expect } from 'vitest';
+import NotFound from '@/features/not-found/NotFound';
 
-// Mock PageContainer
 vi.mock('@/components/layout/PageContainer', () => ({
-  PageContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+  PageContainer: ({ children }: any) => <div>{children}</div>
 }));
 
-// Mock Framer Motion
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>
   }
 }));
 
+vi.mock('lucide-react', () => ({
+  HelpCircle: () => <div data-testid="help-icon">HelpCircle</div>
+}));
+
 describe('NotFound Component', () => {
-  it('renders the 404 message', () => {
+  it('renders 404 message', () => {
     render(
       <MemoryRouter>
         <NotFound />
       </MemoryRouter>
     );
+
     expect(screen.getByText('404 - Page Not Found')).toBeInTheDocument();
   });
 
-  it('renders the descriptive text', () => {
+  it('renders help icon', () => {
     render(
       <MemoryRouter>
         <NotFound />
       </MemoryRouter>
     );
-    expect(screen.getByText(/The cinematic journey you seek is not found/i)).toBeInTheDocument();
+
+    expect(screen.getByTestId('help-icon')).toBeInTheDocument();
   });
 
-  it('renders the return home link', () => {
+  it('renders return home link', () => {
     render(
       <MemoryRouter>
         <NotFound />
       </MemoryRouter>
     );
-    const link = screen.getByText('Return to Lovestory Home');
+
+    const link = screen.getByRole('link', { name: /return to lovestory home/i });
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/');
   });

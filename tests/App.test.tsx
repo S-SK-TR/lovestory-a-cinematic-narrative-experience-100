@@ -2,9 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from '@/App';
 import { useStore } from '@/core/store';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock the store
+// Mock Zustand store
 vi.mock('@/core/store', () => ({
   useStore: vi.fn()
 }));
@@ -39,7 +38,7 @@ describe('App Component', () => {
     });
   });
 
-  it('renders the AppShell component', () => {
+  it('renders AppShell component', () => {
     render(
       <MemoryRouter initialEntries={[ '/' ]}>
         <App />
@@ -48,7 +47,7 @@ describe('App Component', () => {
     expect(screen.getByTestId('app-shell')).toBeInTheDocument();
   });
 
-  it('renders the Home page at root route', () => {
+  it('renders Home page with PageTransition', () => {
     render(
       <MemoryRouter initialEntries={[ '/' ]}>
         <App />
@@ -57,7 +56,7 @@ describe('App Component', () => {
     expect(screen.getByTestId('home-page')).toBeInTheDocument();
   });
 
-  it('renders the NotFound component for unknown routes', () => {
+  it('renders NotFound page for unknown routes', () => {
     render(
       <MemoryRouter initialEntries={[ '/unknown' ]}>
         <App />
@@ -66,7 +65,7 @@ describe('App Component', () => {
     expect(screen.getByTestId('not-found')).toBeInTheDocument();
   });
 
-  it('applies the theme class from store', () => {
+  it('applies theme class from store', () => {
     vi.mocked(useStore).mockReturnValueOnce({
       theme: 'light',
       setTheme: vi.fn(),
@@ -82,7 +81,7 @@ describe('App Component', () => {
       </MemoryRouter>
     );
 
-    const appContainer = screen.getByTestId('app-shell').parentElement;
-    expect(appContainer).toHaveClass('light');
+    const appDiv = screen.getByTestId('app-shell').parentElement;
+    expect(appDiv).toHaveClass('light');
   });
 });

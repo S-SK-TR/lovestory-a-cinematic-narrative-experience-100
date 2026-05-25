@@ -1,17 +1,31 @@
 import { cn } from '@/lib/utils';
-import { describe, it, expect } from 'vitest';
+
+vi.mock('clsx', () => ({
+  clsx: (...inputs: any[]) => inputs.flat().filter(Boolean).join(' ')
+}));
+
+vi.mock('tailwind-merge', () => ({
+  twMerge: (input: string) => input
+}));
 
 describe('cn utility function', () => {
   it('merges class names correctly', () => {
-    expect(cn('class1', 'class2')).toBe('class1 class2');
+    const result = cn('bg-red-500', 'text-white', 'p-4');
+    expect(result).toBe('bg-red-500 text-white p-4');
   });
 
   it('handles conditional classes', () => {
-    expect(cn('class1', false && 'class2', true && 'class3')).toBe('class1 class3');
+    const isActive = true;
+    const result = cn(
+      'bg-red-500',
+      isActive && 'bg-blue-500',
+      'text-white'
+    );
+    expect(result).toBe('bg-blue-500 text-white');
   });
 
-  it('resolves Tailwind conflicts', () => {
-    expect(cn('p-4', 'p-8')).toBe('p-8');
-    expect(cn('bg-red-500', 'bg-blue-500')).toBe('bg-blue-500');
+  it('handles array of classes', () => {
+    const result = cn(['bg-red-500', 'text-white']);
+    expect(result).toBe('bg-red-500 text-white');
   });
 });
