@@ -1,21 +1,14 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { PageTransition } from '@/components/layout/PageTransition';
-
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>
-  },
-  AnimatePresence: ({ children }: any) => <div>{children}</div>
-}));
+import { MemoryRouter } from 'react-router-dom';
 
 vi.mock('react-router-dom', async (importOriginal) => {
-  const original = await importOriginal();
+  const original = await importOriginal()
   return {
     ...original,
     useLocation: () => ({ pathname: '/test' })
-  };
-});
+  }
+})
 
 describe('PageTransition Component', () => {
   it('renders children content', () => {
@@ -25,8 +18,34 @@ describe('PageTransition Component', () => {
           <div data-testid="child-content">Test Content</div>
         </PageTransition>
       </MemoryRouter>
-    );
+    )
+    expect(screen.getByTestId('child-content')).toBeInTheDocument()
+  })
 
-    expect(screen.getByTestId('child-content')).toBeInTheDocument();
-  });
-});
+  it('applies correct animation variants', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <PageTransition>
+          <div>Test Content</div>
+        </PageTransition>
+      </MemoryRouter>
+    )
+    const motionDiv = container.firstChild
+    expect(motionDiv).toHaveAttribute('data-framer-motion')
+    expect(motionDiv).toHaveAttribute('initial', 'initial')
+    expect(motionDiv).toHaveAttribute('animate', 'animate')
+    expect(motionDiv).toHaveAttribute('exit', 'exit')
+  })
+
+  it('uses AnimatePresence with wait mode', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <PageTransition>
+          <div>Test Content</div>
+        </PageTransition>
+      </MemoryRouter>
+    )
+    const animatePresence = container.firstChild?.parentElement
+    expect(animatePresence).toHaveAttribute('mode', 'wait')
+  })
+})

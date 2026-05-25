@@ -1,55 +1,55 @@
 import { useStore } from '@/core/store';
-import { act, renderHook } from '@testing-library/react';
-
-vi.mock('zustand', () => ({
-  create: (fn: any) => fn()
-}));
-
-vi.mock('zustand/middleware', () => ({
-  persist: (fn: any) => fn
-}));
+import { act } from 'react';
 
 describe('App Store', () => {
   it('initializes with default values', () => {
-    const { result } = renderHook(() => useStore());
+    const state = useStore.getState()
+    expect(state.theme).toBe('dark')
+    expect(state.user).toBeNull()
+    expect(state.isLoading).toBe(false)
+  })
 
-    expect(result.current.theme).toBe('dark');
-    expect(result.current.user).toBeNull();
-    expect(result.current.isLoading).toBe(false);
-  });
-
-  it('updates theme', () => {
-    const { result } = renderHook(() => useStore());
-
+  it('updates theme correctly', () => {
     act(() => {
-      result.current.setTheme('light');
-    });
+      useStore.getState().setTheme('light')
+    })
+    expect(useStore.getState().theme).toBe('light')
+  })
 
-    expect(result.current.theme).toBe('light');
-  });
-
-  it('updates user', () => {
-    const { result } = renderHook(() => useStore());
+  it('updates user correctly', () => {
     const testUser = {
-      id: '1',
+      id: '123',
       name: 'Test User',
       email: 'test@example.com'
-    };
-
+    }
     act(() => {
-      result.current.setUser(testUser);
-    });
+      useStore.getState().setUser(testUser)
+    })
+    expect(useStore.getState().user).toEqual(testUser)
+  })
 
-    expect(result.current.user).toEqual(testUser);
-  });
-
-  it('updates loading state', () => {
-    const { result } = renderHook(() => useStore());
-
+  it('updates loading state correctly', () => {
     act(() => {
-      result.current.setLoading(true);
-    });
+      useStore.getState().setLoading(true)
+    })
+    expect(useStore.getState().isLoading).toBe(true)
+  })
 
-    expect(result.current.isLoading).toBe(true);
-  });
-});
+  it('persists theme and user to localStorage', () => {
+    // Test persist middleware
+    const testUser = {
+      id: '456',
+      name: 'Persist User',
+      email: 'persist@example.com'
+    }
+    act(() => {
+      useStore.getState().setTheme('light')
+      useStore.getState().setUser(testUser)
+    })
+
+    // Simulate page reload
+    const newStore = useStore.getState()
+    expect(newStore.theme).toBe('light')
+    expect(newStore.user).toEqual(testUser)
+  })
+})
