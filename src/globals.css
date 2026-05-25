@@ -1,0 +1,28 @@
+/* @tailwind base — centralized in src/index.css */
+
+
+
+/* PREMIUM UI: Tema değişkenleri ve font tanımlamaları */
+:root {
+  --bg-base:      #09090b;        /* zinc-950 */
+  --bg-surface:   #18181b;        /* zinc-900 */
+  --bg-elevated:  #27272a;        /* zinc-800 */
+  --border:       #3f3f46;        /* zinc-700 */
+  --text-primary: #fafafa;
+  --text-muted:   #a1a1aa;
+  --brand-500:    142 71% 45%;    /* emerald-500 */
+  --font-inter:   'Inter', system-ui, sans-serif;
+  --font-outfit:  'Outfit', sans-serif;
+}
+
+body {
+  font-family: var(--font-inter);
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-outfit);
+}
